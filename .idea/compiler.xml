@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="multiverse_market" target="21" />
+      <module name="multiverse_market.main" target="21" />
+      <module name="multiverse_market.test" target="21" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="multiverse_market" options="-parameters" />
+      <module name="multiverse_market.main" options="-parameters" />
+      <module name="multiverse_market.test" options="-parameters" />
+    </option>
+  </component>
+</project>

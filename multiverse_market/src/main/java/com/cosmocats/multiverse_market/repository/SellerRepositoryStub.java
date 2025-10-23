@@ -10,6 +10,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class SellerRepositoryStub implements SellerRepository {
     private final List<Seller> storage = new CopyOnWriteArrayList<>();
 
+    public SellerRepositoryStub() {
+        Seller s1 = new Seller("Міжгалактичний Ілон", "planet-2", "elon@spacex.mars");
+        s1.setId("seller-1");
+        storage.add(s1);
+
+        Seller s2 = new Seller("Корпорація 'Зірка'", "planet-3", "support@starc-corp.xen");
+        s2.setId("seller-2");
+        storage.add(s2);
+    }
+
     @Override
     public List<Seller> findAll() { return new ArrayList<>(storage); }
 

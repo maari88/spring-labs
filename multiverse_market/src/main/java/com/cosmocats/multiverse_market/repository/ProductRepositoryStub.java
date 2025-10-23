@@ -12,6 +12,30 @@ public class ProductRepositoryStub implements ProductRepository {
 
     private final List<Product> storage = new CopyOnWriteArrayList<>();
 
+    public ProductRepositoryStub() {
+        Product p1 = new Product(
+                "Марсіанський пісок (1кг)",
+                "Справжній червоний пісок з кратеру Гусєв.",
+                49.99,
+                "seller-1", // ID продавця Ілона
+                "planet-2", // ID планети Марс
+                Arrays.asList("пісок", "марс", "сувенір")
+        );
+        p1.setId("product-1");
+        storage.add(p1);
+
+        Product p2 = new Product(
+                "Ксено-кристал",
+                "Рідкісний енергетичний кристал.",
+                1299.00,
+                "seller-2", // ID продавця 'Зірка'
+                "planet-3", // ID планети Ксенон-Прайм
+                Arrays.asList("кристал", "енергія", "ксенон")
+        );
+        p2.setId("product-2");
+        storage.add(p2);
+    }
+
     @Override
     public List<Product> findAll() {
         return new ArrayList<>(storage);

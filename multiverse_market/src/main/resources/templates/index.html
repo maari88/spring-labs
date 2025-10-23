@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Multiverse Market</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
+        h1 { color: #1a1a1a; text-align: center; }
+        h2 { color: #444; border-bottom: 2px solid #007bff; padding-bottom: 5px; margin-top: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f0f8ff; color: #0056b3; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        tr:hover { background-color: #f1f1f1; }
+        .empty-list { color: #888; font-style: italic; background-color: #fff; padding: 10px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+        /* Цей блок залишаємо, він гарний :) */
+        .welcome-box {
+            background-color: #e6f7ff;
+            border: 1px solid #b3e0ff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.1em;
+            color: #0056b3;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 1. Демонстрація @Bean (залишаємо, бо це частина функціоналу) -->
+<div class="welcome-box" th:if="${welcomeMessage}">
+    <strong th:text="${welcomeMessage}"></strong>
+</div>
+
+<h1>Ласкаво просимо до Multiverse Market!</h1>
+
+<!--
+  2. ДЕМОНСТРАЦІЯ SINGLETON/PROTOTYPE
+     Блок повністю видалено з HTML.
+     Тепер він знаходиться у DemoRunner.java і виводиться в консоль.
+-->
+
+<!-- Секція для Продуктів -->
+<h2>Продукти</h2>
+<div th:if="${products.isEmpty()}">
+    <p class="empty-list">Список продуктів порожній.</p>
+</div>
+<table th:unless="${products.isEmpty()}">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Назва</th>
+        <th>Опис</th>
+        <th>Ціна</th>
+        <th>ID Продавця</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="product : ${products}">
+        <td th:text="${product.id}"></td>
+        <td th:text="${product.name}"></td>
+        <td th:text="${product.description}"></td>
+        <td th:text="${product.price} + ' крд.'"></td>
+        <td th:text="${product.sellerId}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Секція для Продавців -->
+<h2>Продавці</h2>
+<div th:if="${sellers.isEmpty()}">
+    <p class="empty-list">Список продавців порожній.</p>
+</div>
+<table th:unless="${sellers.isEmpty()}">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Ім'я</th>
+        <th>ID Планети</th>
+        <th>Контакти</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="seller : ${sellers}">
+        <td th:text="${seller.id}"></td>
+        <td th:text="${seller.name}"></td>
+        <td th:text="${seller.planetId}"></td>
+        <td th:text="${seller.contact}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Секція для Покупців -->
+<h2>Покупці</h2>
+<div th:if="${buyers.isEmpty()}">
+    <p class="empty-list">Список покупців порожній.</p>
+</div>
+<table th:unless="${buyers.isEmpty()}">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Ім'я</th>
+        <th>Email</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="buyer : ${buyers}">
+        <td th:text="${buyer.id}"></td>
+        <td th:text="${buyer.username}"></td>
+        <td th:text="${buyer.email}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Секція для Планет -->
+<h2>Планети</h2>
+<div th:if="${planets.isEmpty()}">
+    <p class="empty-list">Список планет порожній.</p>
+</div>
+<table th:unless="${planets.isEmpty()}">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Назва</th>
+        <th>Регіон</th>
+        <th>Базова ставка (доставка)</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="planet : ${planets}">
+        <td th:text="${planet.id}"></td>
+        <td th:text="${planet.name}"></td>
+        <td th:text="${planet.region}"></td>
+        <td th:text="${planet.shippingBaseRate} + ' крд.'"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
+
