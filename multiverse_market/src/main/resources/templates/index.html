@@ -29,20 +29,12 @@
 </head>
 <body>
 
-<!-- 1. Демонстрація @Bean (залишаємо, бо це частина функціоналу) -->
 <div class="welcome-box" th:if="${welcomeMessage}">
     <strong th:text="${welcomeMessage}"></strong>
 </div>
 
 <h1>Ласкаво просимо до Multiverse Market!</h1>
 
-<!--
-  2. ДЕМОНСТРАЦІЯ SINGLETON/PROTOTYPE
-     Блок повністю видалено з HTML.
-     Тепер він знаходиться у DemoRunner.java і виводиться в консоль.
--->
-
-<!-- Секція для Продуктів -->
 <h2>Продукти</h2>
 <div th:if="${products.isEmpty()}">
     <p class="empty-list">Список продуктів порожній.</p>
@@ -68,7 +60,6 @@
     </tbody>
 </table>
 
-<!-- Секція для Продавців -->
 <h2>Продавці</h2>
 <div th:if="${sellers.isEmpty()}">
     <p class="empty-list">Список продавців порожній.</p>
@@ -92,7 +83,6 @@
     </tbody>
 </table>
 
-<!-- Секція для Покупців -->
 <h2>Покупці</h2>
 <div th:if="${buyers.isEmpty()}">
     <p class="empty-list">Список покупців порожній.</p>
@@ -114,7 +104,6 @@
     </tbody>
 </table>
 
-<!-- Секція для Планет -->
 <h2>Планети</h2>
 <div th:if="${planets.isEmpty()}">
     <p class="empty-list">Список планет порожній.</p>

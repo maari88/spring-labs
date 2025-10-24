@@ -5,11 +5,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-// 5. Демонстрація @Component
 @Component
-// 5. Демонстрація скоупу 'prototype'
-// @Scope("prototype") каже Spring:
-// "Створюй НОВИЙ екземпляр цього біна КОЖЕН РАЗ, коли його запитують (ін'єктують)".
 @Scope("prototype")
 public class ShoppingCart {
 

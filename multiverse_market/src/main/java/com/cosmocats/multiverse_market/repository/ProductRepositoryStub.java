@@ -17,8 +17,8 @@ public class ProductRepositoryStub implements ProductRepository {
                 "Марсіанський пісок (1кг)",
                 "Справжній червоний пісок з кратеру Гусєв.",
                 49.99,
-                "seller-1", // ID продавця Ілона
-                "planet-2", // ID планети Марс
+                "seller-1",
+                "planet-2",
                 Arrays.asList("пісок", "марс", "сувенір")
         );
         p1.setId("product-1");
@@ -28,8 +28,8 @@ public class ProductRepositoryStub implements ProductRepository {
                 "Ксено-кристал",
                 "Рідкісний енергетичний кристал.",
                 1299.00,
-                "seller-2", // ID продавця 'Зірка'
-                "planet-3", // ID планети Ксенон-Прайм
+                "seller-2",
+                "planet-3",
                 Arrays.asList("кристал", "енергія", "ксенон")
         );
         p2.setId("product-2");
