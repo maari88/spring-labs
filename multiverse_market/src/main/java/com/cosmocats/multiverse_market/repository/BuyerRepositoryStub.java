@@ -15,7 +15,7 @@ public class BuyerRepositoryStub implements BuyerRepository {
         b1.setId("buyer-1");
         storage.add(b1);
 
-        Buyer b2 = new Buyer("captain_jane", "janeway@voyager.fed");
+        Buyer b2 = new Buyer("captain_jane", null);
         b2.setId("buyer-2");
         storage.add(b2);
     }
@@ -25,4 +25,3 @@ public class BuyerRepositoryStub implements BuyerRepository {
     @Override public Buyer save(Buyer b) { findById(b.getId()).ifPresent(storage::remove); storage.add(b); return b; }
     @Override public void deleteById(String id) { storage.removeIf(b -> b.getId().equals(id)); }
 }
-
