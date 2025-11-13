@@ -4,6 +4,8 @@ import com.cosmocats.multiverse_market.model.Product;
 import com.cosmocats.multiverse_market.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.owasp.html.PolicyFactory;
+import org.owasp.html.Sanitizers;
 
 import java.util.List;
 
@@ -16,6 +18,8 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     private ShippingService shippingService;
+
+    private static final PolicyFactory SANITIZE_POLICY = Sanitizers.FORMATTING.and(Sanitizers.BLOCKS);
 
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
@@ -51,6 +55,26 @@ public class ProductService {
         }
 
         return products;
+    }
+
+    public Product saveProduct(Product product) {
+        if (product == null) {
+            logger.log("Спроба зберегти null-продукт.");
+            throw new IllegalArgumentException("Продукт не може бути null");
+        }
+
+        logger.log("Санітизація продукту: " + product.getName());
+
+        String cleanName = SANITIZE_POLICY.sanitize(product.getName());
+        String cleanDescription = SANITIZE_POLICY.sanitize(product.getDescription());
+
+        product.setName(cleanName);
+        product.setDescription(cleanDescription);
+        // product.setKeywords(cleanKeywords);
+
+        logger.log("Збереження продукту: " + product.getName());
+
+        return productRepository.save(product);
     }
 
 }
