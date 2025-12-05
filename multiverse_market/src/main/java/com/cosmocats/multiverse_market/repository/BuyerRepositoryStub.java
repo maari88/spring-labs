@@ -18,6 +18,9 @@ public class BuyerRepositoryStub implements BuyerRepository {
         Buyer b2 = new Buyer("captain_jane", null);
         b2.setId("buyer-2");
         storage.add(b2);
+        Buyer b3 = new Buyer("zhora_traveler3", "zhora3@galaxy.net");
+        b3.setId("buyer-3");
+        storage.add(b3);
     }
 
     @Override public List<Buyer> findAll() { return new ArrayList<>(storage); }
