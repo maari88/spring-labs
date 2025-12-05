@@ -8,6 +8,9 @@ import org.owasp.html.PolicyFactory;
 import org.owasp.html.Sanitizers;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -16,7 +19,6 @@ public class ProductService {
     private LoggerComponent logger;
 
     private final ProductRepository productRepository;
-
     private ShippingService shippingService;
 
     private static final PolicyFactory SANITIZE_POLICY = Sanitizers.FORMATTING.and(Sanitizers.BLOCKS);
@@ -30,52 +32,60 @@ public class ProductService {
         this.shippingService = shippingService;
     }
 
-
+    // --- 1. Отримати всі (для HTML сторінки) ---
     public List<Product> getAllProductsWithLogs() {
         logger.log("Запит списку всіх продуктів...");
-
-        List<Product> products = productRepository.findAll();
-
-        if (shippingService != null) {
-            if (products.isEmpty()) {
-                logger.log("Список продуктів порожній, вартість доставки не розраховується.");
-            } else {
-
-                logger.log("Розрахунок вартості доставки для " + products.size() + " продуктів...");
-
-                for (Product product : products) {
-                    String planetId = product.getPlanetId();
-                    double cost = shippingService.getShippingCost(planetId);
-
-                    logger.log("  - Вартість доставки для '" + product.getName() + "' складає: " + cost + " крд.");
-                }
-            }
-        } else {
-            logger.log("ShippingService не ін'єктовано.");
-        }
-
-        return products;
+        return productRepository.findAll();
     }
 
+    // --- 2.2 Фільтрація та Пагінація (REST) ---
+    public List<Product> findProducts(String planetId, Double minPrice, int page, int size) {
+        logger.log(String.format("REST: Пошук з фільтром (planet=%s, price>=%s) сторінка %d", planetId, minPrice, page));
+
+        return productRepository.findAll().stream()
+                .filter(p -> planetId == null || p.getPlanetId().equals(planetId))
+                .filter(p -> minPrice == null || p.getPrice() >= minPrice)
+                .skip((long) page * size)
+                .limit(size)
+                .collect(Collectors.toList());
+    }
+
+    // --- 2.1 Пошук одного ---
+    public Optional<Product> findById(String id) {
+        return productRepository.findById(id);
+    }
+
+    // --- 2.1 Створення та Оновлення ---
     public Product saveProduct(Product product) {
-        if (product == null) {
-            logger.log("Спроба зберегти null-продукт.");
-            throw new IllegalArgumentException("Продукт не може бути null");
-        }
+        if (product == null) throw new IllegalArgumentException("Product cannot be null");
 
-        logger.log("Санітизація продукту: " + product.getName());
-
-        String cleanName = SANITIZE_POLICY.sanitize(product.getName());
-        String cleanDescription = SANITIZE_POLICY.sanitize(product.getDescription());
-
-        product.setName(cleanName);
-        product.setDescription(cleanDescription);
-        // product.setKeywords(cleanKeywords);
-
-        logger.log("Збереження продукту: " + product.getName());
+        if (product.getName() != null) product.setName(SANITIZE_POLICY.sanitize(product.getName()));
+        if (product.getDescription() != null) product.setDescription(SANITIZE_POLICY.sanitize(product.getDescription()));
 
         return productRepository.save(product);
     }
 
-}
+    // --- 2.3 Часткове оновлення (PATCH) ---
+    public Product updateProductPartially(String id, Map<String, Object> updates) {
+        Optional<Product> productOpt = productRepository.findById(id);
+        if (productOpt.isEmpty()) return null;
 
+        Product product = productOpt.get();
+
+        if (updates.containsKey("name")) product.setName((String) updates.get("name"));
+        if (updates.containsKey("description")) product.setDescription((String) updates.get("description"));
+        if (updates.containsKey("price")) {
+            Object price = updates.get("price");
+            if (price instanceof Number) product.setPrice(((Number) price).doubleValue());
+        }
+        if (updates.containsKey("planetId")) product.setPlanetId((String) updates.get("planetId"));
+        if (updates.containsKey("sellerId")) product.setSellerId((String) updates.get("sellerId"));
+
+        return productRepository.save(product);
+    }
+
+    // --- 2.1 Видалення ---
+    public void deleteById(String id) {
+        productRepository.deleteById(id);
+    }
+}
