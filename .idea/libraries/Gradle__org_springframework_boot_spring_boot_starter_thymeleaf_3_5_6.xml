@@ -5,6 +5,8 @@
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-thymeleaf/3.5.6/bf2ac97c9df1ffe9449758b680a663c3bb1eeee6/spring-boot-starter-thymeleaf-3.5.6.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-thymeleaf/3.5.6/bf2ac97c9df1ffe9449758b680a663c3bb1eeee6/spring-boot-starter-thymeleaf-3.5.6-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

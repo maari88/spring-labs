@@ -5,6 +5,8 @@
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.assertj/assertj-core/3.27.4/65e62575f7e422df6d290dc1cb15f3c97108b2b1/assertj-core-3.27.4.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.assertj/assertj-core/3.27.4/9d7aaef419ce67daa9bcee1827b8d7c7878fb6e/assertj-core-3.27.4-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>
