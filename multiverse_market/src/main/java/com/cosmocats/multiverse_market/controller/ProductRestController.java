@@ -57,7 +57,11 @@ public class ProductRestController {
     @ApiResponse(responseCode = "201", description = "Створено")
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
+<<<<<<< Updated upstream
         product.setId(null);
+=======
+        product.setId(null); // Новий запис
+>>>>>>> Stashed changes
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.saveProduct(product));
     }
 

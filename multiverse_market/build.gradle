@@ -22,7 +22,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+<<<<<<< Updated upstream
     // --- ВАЖЛИВО: Бібліотека для Swagger / OpenAPI (Пункт 3) ---
+=======
+    // --- ВАЖЛИВО: Додано бібліотеку для Swagger / OpenAPI ---
+    // Без неї класи OpenAPI, Info, Contact не будуть знайдені
+>>>>>>> Stashed changes
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

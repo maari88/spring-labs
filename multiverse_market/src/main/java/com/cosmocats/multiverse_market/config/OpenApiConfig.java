@@ -15,9 +15,16 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("Multiverse Market API")
                         .version("1.0")
+<<<<<<< Updated upstream
                         .description("RESTful API для управління міжгалактичним ринком.")
                         .contact(new Contact()
                                 .name("CosmoCats Team")
                                 .email("support@multiverse.market")));
+=======
+                        .description("RESTful API для управління міжгалактичним ринком (Лабораторна робота).")
+                        .contact(new Contact()
+                                .name("Студент")
+                                .email("student@university.edu")));
+>>>>>>> Stashed changes
     }
 }
