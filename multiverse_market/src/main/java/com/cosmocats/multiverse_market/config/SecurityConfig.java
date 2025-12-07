@@ -13,23 +13,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+
+                .csrf(csrf -> csrf.disable())
+
                 .authorizeHttpRequests(authz -> authz
+
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+
+                        .requestMatchers("/api/**").permitAll()
+
                         .requestMatchers("/").permitAll()
-                        .anyRequest().authenticated()
+
+                        .anyRequest().permitAll()
                 )
                 .formLogin(form -> form.permitAll())
-                .logout(logout -> logout.permitAll())
-
-                .headers(headers -> headers
-                        .contentSecurityPolicy(csp -> csp
-                                .policyDirectives(
-                                        "script-src 'self'; " +
-                                                "object-src 'none'; " +
-                                                "style-src 'self' 'unsafe-inline'; " +
-                                                "default-src 'self'"
-                                )
-                        )
-                );
+                .logout(logout -> logout.permitAll());
 
         return http.build();
     }

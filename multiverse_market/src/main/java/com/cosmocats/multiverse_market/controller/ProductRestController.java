@@ -27,7 +27,7 @@ public class ProductRestController {
         this.productService = productService;
     }
 
-    // --- GET (Всі + Фільтри + Пагінація) ---
+
     @Operation(summary = "Отримати список товарів", description = "Повертає список товарів з фільтрацією та пагінацією.")
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts(
@@ -39,7 +39,7 @@ public class ProductRestController {
         return ResponseEntity.ok(productService.findProducts(planetId, minPrice, page, size));
     }
 
-    // --- GET (Один) ---
+
     @Operation(summary = "Отримати товар по ID")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Знайдено"),
@@ -52,7 +52,7 @@ public class ProductRestController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // --- POST (Створити) ---
+
     @Operation(summary = "Створити товар")
     @ApiResponse(responseCode = "201", description = "Створено")
     @PostMapping
@@ -61,7 +61,7 @@ public class ProductRestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.saveProduct(product));
     }
 
-    // --- PUT (Оновити повністю) ---
+
     @Operation(summary = "Повне оновлення товару")
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable String id, @RequestBody Product product) {
@@ -70,7 +70,7 @@ public class ProductRestController {
         return ResponseEntity.ok(productService.saveProduct(product));
     }
 
-    // --- PATCH (Часткове оновлення) ---
+
     @Operation(summary = "Часткове оновлення (ціна, опис тощо)")
     @PatchMapping("/{id}")
     public ResponseEntity<Product> patchProduct(
@@ -81,7 +81,7 @@ public class ProductRestController {
         return (updated != null) ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 
-    // --- DELETE (Видалити) ---
+
     @Operation(summary = "Видалити товар")
     @ApiResponse(responseCode = "204", description = "Видалено успішно")
     @DeleteMapping("/{id}")
