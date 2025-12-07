@@ -32,13 +32,13 @@ public class ProductService {
         this.shippingService = shippingService;
     }
 
-    // --- 1. Отримати всі (для HTML сторінки) ---
+
     public List<Product> getAllProductsWithLogs() {
         logger.log("Запит списку всіх продуктів...");
         return productRepository.findAll();
     }
 
-    // --- 2.2 Фільтрація та Пагінація (REST) ---
+
     public List<Product> findProducts(String planetId, Double minPrice, int page, int size) {
         logger.log(String.format("REST: Пошук з фільтром (planet=%s, price>=%s) сторінка %d", planetId, minPrice, page));
 
@@ -50,12 +50,12 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    // --- 2.1 Пошук одного ---
+
     public Optional<Product> findById(String id) {
         return productRepository.findById(id);
     }
 
-    // --- 2.1 Створення та Оновлення ---
+
     public Product saveProduct(Product product) {
         if (product == null) throw new IllegalArgumentException("Product cannot be null");
 
@@ -65,7 +65,7 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    // --- 2.3 Часткове оновлення (PATCH) ---
+
     public Product updateProductPartially(String id, Map<String, Object> updates) {
         Optional<Product> productOpt = productRepository.findById(id);
         if (productOpt.isEmpty()) return null;
@@ -84,7 +84,7 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    // --- 2.1 Видалення ---
+
     public void deleteById(String id) {
         productRepository.deleteById(id);
     }

@@ -15,6 +15,6 @@ public class ShippingService {
     public double getShippingCost(String planetId) {
         return planetRepository.findById(planetId)
                 .map(planet -> planet.getShippingBaseRate() * 1.1)
-                .orElse(100.0); // Стандартна ставка, якщо планету не знайдено
+                .orElse(100.0);
     }
 }
