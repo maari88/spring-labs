@@ -1,4 +1,4 @@
-package com.cosmocats.multiverse_market.repository;
+/*package com.cosmocats.multiverse_market.repository;
 
 import com.cosmocats.multiverse_market.model.Product;
 
@@ -15,4 +15,4 @@ public interface ProductRepository {
     List<Product> findByPlanetId(String planetId);
     List<Product> searchByNameOrKeywords(String query);
 }
-
+*/

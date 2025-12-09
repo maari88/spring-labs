@@ -1,57 +1,73 @@
 package com.cosmocats.multiverse_market.service;
 
 import com.cosmocats.multiverse_market.model.Product;
-import com.cosmocats.multiverse_market.repository.ProductRepository;
+import com.cosmocats.multiverse_market.repository.ProductDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
 
+    private final ProductDao productDao;
+    private final LoggerComponent logger;
+
+    // Використовуємо @Qualifier, щоб вибрати конкретну реалізацію DAO (jdbcClientDao або jdbcTemplateDao)
+    // Або покладаємось на @Primary в JdbcClientImpl
     @Autowired
-    private LoggerComponent logger;
-
-    private final ProductRepository productRepository;
-
-    private ShippingService shippingService;
-
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    public ProductService(@Qualifier("jdbcClientDao") ProductDao productDao, LoggerComponent logger) {
+        this.productDao = productDao;
+        this.logger = logger;
     }
 
-    @Autowired
-    public void setShippingService(ShippingService shippingService) {
-        this.shippingService = shippingService;
+    public List<Product> findAll() {
+        return productDao.findAll();
     }
 
+    public List<Product> findByPlanet(String planetId) {
+        return productDao.findByPlanetId(planetId);
+    }
 
-    public List<Product> getAllProductsWithLogs() {
-        logger.log("Запит списку всіх продуктів...");
+    public Optional<Product> findById(Long id) {
+        return productDao.findById(id);
+    }
 
-        List<Product> products = productRepository.findAll();
-
-        if (shippingService != null) {
-            if (products.isEmpty()) {
-                logger.log("Список продуктів порожній, вартість доставки не розраховується.");
-            } else {
-
-                logger.log("Розрахунок вартості доставки для " + products.size() + " продуктів...");
-
-                for (Product product : products) {
-                    String planetId = product.getPlanetId();
-                    double cost = shippingService.getShippingCost(planetId);
-
-                    logger.log("  - Вартість доставки для '" + product.getName() + "' складає: " + cost + " крд.");
-                }
-            }
+    public Product save(Product product) {
+        if (product.getId() == null) {
+            logger.log("Створення нового продукту: " + product.getName());
+            return productDao.create(product);
         } else {
-            logger.log("ShippingService не ін'єктовано.");
+            logger.log("Оновлення продукту ID: " + product.getId());
+            productDao.update(product);
+            return product;
+        }
+    }
+
+    public void deleteById(Long id) {
+        productDao.deleteById(id);
+    }
+
+    // --- ТРАНЗАКЦІЙНИЙ МЕТОД ---
+    // Демонстрація складної операції: зміна цін для всієї планети
+    @Transactional
+    public void applyInflationToPlanet(String planetId, double percentage, boolean simulateError) {
+        double multiplier = 1.0 + (percentage / 100.0);
+        logger.log("Початок транзакції: Інфляція " + percentage + "% на планеті " + planetId);
+
+        // 1. Оновлюємо ціни
+        int updatedRows = productDao.updatePriceByPlanet(planetId, multiplier);
+        logger.log("Оновлено записів: " + updatedRows);
+
+        // 2. Симуляція помилки
+        if (simulateError) {
+            logger.log("!!! ПОМИЛКА! Відкат транзакції !!!");
+            throw new RuntimeException("Штучна помилка для тестування відкату транзакції");
         }
 
-        return products;
+        logger.log("Транзакція успішно завершена.");
     }
-
 }
-

@@ -1,4 +1,4 @@
-package com.cosmocats.multiverse_market.repository;
+/*package com.cosmocats.multiverse_market.repository;
 
 import com.cosmocats.multiverse_market.model.Product;
 import org.springframework.stereotype.Repository;
@@ -90,3 +90,4 @@ public class ProductRepositoryStub implements ProductRepository {
         ).collect(Collectors.toList());
     }
 }
+*/
