@@ -1,91 +1,67 @@
 package com.cosmocats.multiverse_market.service;
 
 import com.cosmocats.multiverse_market.model.Product;
-import com.cosmocats.multiverse_market.repository.ProductRepository;
+import com.cosmocats.multiverse_market.repository.ProductDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.owasp.html.PolicyFactory;
-import org.owasp.html.Sanitizers;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
 
-    @Autowired
-    private LoggerComponent logger;
-
-    private final ProductRepository productRepository;
-    private ShippingService shippingService;
-
-    private static final PolicyFactory SANITIZE_POLICY = Sanitizers.FORMATTING.and(Sanitizers.BLOCKS);
-
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
+    private final ProductDao productDao;
+    private final LoggerComponent logger;
 
     @Autowired
-    public void setShippingService(ShippingService shippingService) {
-        this.shippingService = shippingService;
+    public ProductService(@Qualifier("jdbcClientDao") ProductDao productDao, LoggerComponent logger) {
+        this.productDao = productDao;
+        this.logger = logger;
     }
 
-
-    public List<Product> getAllProductsWithLogs() {
-        logger.log("Запит списку всіх продуктів...");
-        return productRepository.findAll();
+    public List<Product> findAll() {
+        return productDao.findAll();
     }
 
-
-    public List<Product> findProducts(String planetId, Double minPrice, int page, int size) {
-        logger.log(String.format("REST: Пошук з фільтром (planet=%s, price>=%s) сторінка %d", planetId, minPrice, page));
-
-        return productRepository.findAll().stream()
-                .filter(p -> planetId == null || p.getPlanetId().equals(planetId))
-                .filter(p -> minPrice == null || p.getPrice() >= minPrice)
-                .skip((long) page * size)
-                .limit(size)
-                .collect(Collectors.toList());
+    public List<Product> findByPlanet(String planetId) {
+        return productDao.findByPlanetId(planetId);
     }
 
-
-    public Optional<Product> findById(String id) {
-        return productRepository.findById(id);
+    public Optional<Product> findById(Long id) {
+        return productDao.findById(id);
     }
 
-
-    public Product saveProduct(Product product) {
-        if (product == null) throw new IllegalArgumentException("Product cannot be null");
-
-        if (product.getName() != null) product.setName(SANITIZE_POLICY.sanitize(product.getName()));
-        if (product.getDescription() != null) product.setDescription(SANITIZE_POLICY.sanitize(product.getDescription()));
-
-        return productRepository.save(product);
-    }
-
-
-    public Product updateProductPartially(String id, Map<String, Object> updates) {
-        Optional<Product> productOpt = productRepository.findById(id);
-        if (productOpt.isEmpty()) return null;
-
-        Product product = productOpt.get();
-
-        if (updates.containsKey("name")) product.setName((String) updates.get("name"));
-        if (updates.containsKey("description")) product.setDescription((String) updates.get("description"));
-        if (updates.containsKey("price")) {
-            Object price = updates.get("price");
-            if (price instanceof Number) product.setPrice(((Number) price).doubleValue());
+    public Product save(Product product) {
+        if (product.getId() == null) {
+            logger.log("Створення нового продукту: " + product.getName());
+            return productDao.create(product);
+        } else {
+            logger.log("Оновлення продукту ID: " + product.getId());
+            productDao.update(product);
+            return product;
         }
-        if (updates.containsKey("planetId")) product.setPlanetId((String) updates.get("planetId"));
-        if (updates.containsKey("sellerId")) product.setSellerId((String) updates.get("sellerId"));
-
-        return productRepository.save(product);
     }
 
+    public void deleteById(Long id) {
+        productDao.deleteById(id);
+    }
 
-    public void deleteById(String id) {
-        productRepository.deleteById(id);
+    @Transactional
+    public void applyInflationToPlanet(String planetId, double percentage, boolean simulateError) {
+        double multiplier = 1.0 + (percentage / 100.0);
+        logger.log("Початок транзакції. Інфляція " + percentage + "% на планеті " + planetId);
+
+        int updatedRows = productDao.updatePriceByPlanet(planetId, multiplier);
+        logger.log("Оновлено записів: " + updatedRows);
+
+        if (simulateError) {
+            logger.log("Помилка! Відкат транзакції");
+            throw new RuntimeException("Штучна помилка для тестування відкату транзакції.");
+        }
+
+        logger.log("Транзакція успішно завершена.");
     }
 }

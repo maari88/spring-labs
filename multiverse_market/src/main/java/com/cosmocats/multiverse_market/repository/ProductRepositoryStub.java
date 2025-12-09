@@ -1,3 +1,4 @@
+/*
 package com.cosmocats.multiverse_market.repository;
 
 import com.cosmocats.multiverse_market.model.Product;
@@ -90,3 +91,4 @@ public class ProductRepositoryStub implements ProductRepository {
         ).collect(Collectors.toList());
     }
 }
+*/

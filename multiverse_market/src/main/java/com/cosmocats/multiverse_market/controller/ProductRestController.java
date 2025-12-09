@@ -3,9 +3,6 @@ package com.cosmocats.multiverse_market.controller;
 import com.cosmocats.multiverse_market.model.Product;
 import com.cosmocats.multiverse_market.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,11 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/products")
-@Tag(name = "Товари", description = "API для управління товарами (CRUD, пошук, patch)")
+@Tag(name = "Товари", description = "Управління товарами через JDBC")
 public class ProductRestController {
 
     private final ProductService productService;
@@ -27,67 +23,61 @@ public class ProductRestController {
         this.productService = productService;
     }
 
-
-    @Operation(summary = "Отримати список товарів", description = "Повертає список товарів з фільтрацією та пагінацією.")
+    @Operation(summary = "Отримати всі товари", description = "Повертає повний список товарів з бази даних.")
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts(
-            @Parameter(description = "ID планети") @RequestParam(required = false) String planetId,
-            @Parameter(description = "Мін. ціна") @RequestParam(required = false) Double minPrice,
-            @Parameter(description = "Сторінка (0..N)") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Розмір сторінки") @RequestParam(defaultValue = "10") int size
-    ) {
-        return ResponseEntity.ok(productService.findProducts(planetId, minPrice, page, size));
+    public List<Product> getAll(@RequestParam(required = false) String planetId) {
+        if (planetId != null) {
+            return productService.findByPlanet(planetId);
+        }
+        return productService.findAll();
     }
 
-
-    @Operation(summary = "Отримати товар по ID")
+    @Operation(summary = "Знайти товар за ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Знайдено"),
-            @ApiResponse(responseCode = "404", description = "Не знайдено")
+            @ApiResponse(responseCode = "200", description = "Товар знайдено"),
+            @ApiResponse(responseCode = "404", description = "Товар відсутній")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable String id) {
+    public ResponseEntity<Product> getById(@PathVariable Long id) {
         return productService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-
-    @Operation(summary = "Створити товар")
-    @ApiResponse(responseCode = "201", description = "Створено")
+    @Operation(summary = "Створити новий товар", description = "ID генерується базою даних автоматично.")
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        product.setId(null);
-        return ResponseEntity.status(HttpStatus.CREATED).body(productService.saveProduct(product));
+    @ResponseStatus(HttpStatus.CREATED)
+    public Product create(@RequestBody Product product) {
+        return productService.save(product);
     }
 
-
-    @Operation(summary = "Повне оновлення товару")
+    @Operation(summary = "Оновити товар")
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable String id, @RequestBody Product product) {
-        if (productService.findById(id).isEmpty()) return ResponseEntity.notFound().build();
+    public Product update(@PathVariable Long id, @RequestBody Product product) {
         product.setId(id);
-        return ResponseEntity.ok(productService.saveProduct(product));
+        return productService.save(product);
     }
-
-
-    @Operation(summary = "Часткове оновлення (ціна, опис тощо)")
-    @PatchMapping("/{id}")
-    public ResponseEntity<Product> patchProduct(
-            @PathVariable String id,
-            @RequestBody Map<String, Object> updates
-    ) {
-        Product updated = productService.updateProductPartially(id, updates);
-        return (updated != null) ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
-    }
-
 
     @Operation(summary = "Видалити товар")
-    @ApiResponse(responseCode = "204", description = "Видалено успішно")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable String id) {
-        if (productService.findById(id).isEmpty()) return ResponseEntity.notFound().build();
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
         productService.deleteById(id);
-        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Тест транзакції. Інфляція",
+            description = "Змінює ціни всіх товарів на планеті. Якщо simulateError=true, зміни не мають зберегтися.")
+    @PostMapping("/transaction/inflation")
+    public ResponseEntity<String> applyInflation(
+            @RequestParam String planetId,
+            @RequestParam double percentage,
+            @RequestParam(defaultValue = "false") boolean simulateError) {
+        try {
+            productService.applyInflationToPlanet(planetId, percentage, simulateError);
+            return ResponseEntity.ok("Інфляція застосована успішно!");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Транзакція відкочена: " + e.getMessage());
+        }
     }
 }
