@@ -32,10 +32,10 @@ public class MarketController {
 
     @GetMapping("/")
     public String showHomePage(Model model) {
-
         model.addAttribute("welcomeMessage", welcomeMessageGenerator.getWelcomeMessage());
 
-        model.addAttribute("products", productService.getAllProductsWithLogs());
+        model.addAttribute("products", productService.findAll());
+
         model.addAttribute("sellers", sellerRepository.findAll());
         model.addAttribute("buyers", buyerRepository.findAll());
         model.addAttribute("planets", planetRepository.findAll());
@@ -43,4 +43,3 @@ public class MarketController {
         return "index";
     }
 }
-
