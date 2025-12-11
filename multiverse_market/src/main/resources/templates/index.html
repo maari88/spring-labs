@@ -28,7 +28,6 @@
         .rarity-common { color: #333; }
         .rarity-exotic { color: #d9534f; font-weight: bold; }
         .rarity-galactic { color: #5cb85c; font-weight: bold; }
-
     </style>
 </head>
 <body>
@@ -51,7 +50,7 @@
         <th>Назва</th>
         <th>Опис</th>
         <th>Ціна</th>
-        <th>Рідкість</th>
+        <th>Рідкість (Switch)</th>
     </tr>
     </thead>
     <tbody>
@@ -62,8 +61,8 @@
         <td th:text="${product.price} + ' крд.'"></td>
 
         <td th:switch="${product.planetId}">
-            <span th:case="'planet-1'" class="rarity-common">Звичайний (Земля)</span>
-            <span th:case="'planet-2'" class="rarity-exotic">Екзотичний (Марс)</span>
+            <span th:case="'1'" class="rarity-common">Звичайний (Земля)</span>
+            <span th:case="'2'" class="rarity-exotic">Екзотичний (Марс)</span>
             <span th:case="*" class="rarity-galactic">Міжгалактичний</span>
         </td>
     </tr>
@@ -110,7 +109,6 @@
         <td th:text="${buyer.id}"></td>
         <td th:text="${buyer.username}"></td>
 
-
         <td th:text="${buyer.email ?: 'Email не вказано'}"></td>
     </tr>
     </tbody>
@@ -126,7 +124,7 @@
         <th>ID</th>
         <th>Назва</th>
         <th>Регіон</th>
-        <th>Базова ставка (доставка)</th>
+        <th>Базова ставка</th>
     </tr>
     </thead>
     <tbody>
@@ -141,12 +139,3 @@
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
