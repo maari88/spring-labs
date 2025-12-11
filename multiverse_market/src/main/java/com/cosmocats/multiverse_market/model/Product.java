@@ -9,13 +9,15 @@ public class Product {
     private String name;
     private String description;
     private double price;
-    private String sellerId;
-    private String planetId;
+
+    private Long sellerId;
+    private Long planetId;
+
     private List<String> keywords;
 
     public Product() {}
 
-    public Product(Long id, String name, String description, double price, String sellerId, String planetId, List<String> keywords) {
+    public Product(Long id, String name, String description, double price, Long sellerId, Long planetId, List<String> keywords) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -37,11 +39,11 @@ public class Product {
     public double getPrice() { return price; }
     public void setPrice(double price) { this.price = price; }
 
-    public String getSellerId() { return sellerId; }
-    public void setSellerId(String sellerId) { this.sellerId = sellerId; }
+    public Long getSellerId() { return sellerId; }
+    public void setSellerId(Long sellerId) { this.sellerId = sellerId; }
 
-    public String getPlanetId() { return planetId; }
-    public void setPlanetId(String planetId) { this.planetId = planetId; }
+    public Long getPlanetId() { return planetId; }
+    public void setPlanetId(Long planetId) { this.planetId = planetId; }
 
     public List<String> getKeywords() { return keywords; }
     public void setKeywords(List<String> keywords) { this.keywords = keywords; }
