@@ -26,7 +26,7 @@ public class ProductService {
         return productDao.findAll();
     }
 
-    public List<Product> findByPlanet(String planetId) {
+    public List<Product> findByPlanet(Long planetId) {
         return productDao.findByPlanetId(planetId);
     }
 
@@ -50,7 +50,7 @@ public class ProductService {
     }
 
     @Transactional
-    public void applyInflationToPlanet(String planetId, double percentage, boolean simulateError) {
+    public void applyInflationToPlanet(Long planetId, double percentage, boolean simulateError) {
         double multiplier = 1.0 + (percentage / 100.0);
         logger.log("Початок транзакції. Інфляція " + percentage + "% на планеті " + planetId);
 
