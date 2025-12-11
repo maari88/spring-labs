@@ -11,8 +11,9 @@ public interface ProductDao {
     int update(Product product);
     int deleteById(Long id);
 
-    List<Product> findByPlanetId(String planetId);
+    List<Product> findByPlanetId(Long planetId);
+
     List<Product> searchByKeyword(String keyword);
 
-    int updatePriceByPlanet(String planetId, double multiplier);
+    int updatePriceByPlanet(Long planetId, double multiplier);
 }
