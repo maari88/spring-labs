@@ -25,7 +25,7 @@ public class ProductRestController {
 
     @Operation(summary = "Отримати всі товари", description = "Повертає повний список товарів з бази даних.")
     @GetMapping
-    public List<Product> getAll(@RequestParam(required = false) String planetId) {
+    public List<Product> getAll(@RequestParam(required = false) Long planetId) {
         if (planetId != null) {
             return productService.findByPlanet(planetId);
         }
@@ -69,7 +69,7 @@ public class ProductRestController {
             description = "Змінює ціни всіх товарів на планеті. Якщо simulateError=true, зміни не мають зберегтися.")
     @PostMapping("/transaction/inflation")
     public ResponseEntity<String> applyInflation(
-            @RequestParam String planetId,
+            @RequestParam Long planetId,
             @RequestParam double percentage,
             @RequestParam(defaultValue = "false") boolean simulateError) {
         try {
