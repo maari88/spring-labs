@@ -27,12 +27,12 @@ public class ProductDaoJdbcTemplateImpl implements ProductDao {
         List<String> keywords = keywordsStr != null ? Arrays.asList(keywordsStr.split(",")) : List.of();
 
         return new Product(
-                rs.getLong("id"),
+                rs.getLong("product_id"),
                 rs.getString("name"),
                 rs.getString("description"),
                 rs.getDouble("price"),
-                rs.getString("seller_id"),
-                rs.getString("planet_id"),
+                rs.getLong("seller_id"),
+                rs.getLong("planet_id"),
                 keywords
         );
     };
@@ -47,8 +47,10 @@ public class ProductDaoJdbcTemplateImpl implements ProductDao {
             ps.setString(1, product.getName());
             ps.setString(2, product.getDescription());
             ps.setDouble(3, product.getPrice());
-            ps.setString(4, product.getSellerId());
-            ps.setString(5, product.getPlanetId());
+
+            ps.setLong(4, product.getSellerId());
+            ps.setLong(5, product.getPlanetId());
+
             ps.setString(6, product.getKeywords() != null ? String.join(",", product.getKeywords()) : "");
             return ps;
         }, keyHolder);
@@ -61,7 +63,7 @@ public class ProductDaoJdbcTemplateImpl implements ProductDao {
 
     @Override
     public Optional<Product> findById(Long id) {
-        String sql = "SELECT * FROM products WHERE id = ?";
+        String sql = "SELECT * FROM products WHERE product_id = ?";
         return jdbcTemplate.query(sql, productRowMapper, id).stream().findFirst();
     }
 
@@ -72,7 +74,7 @@ public class ProductDaoJdbcTemplateImpl implements ProductDao {
 
     @Override
     public int update(Product product) {
-        String sql = "UPDATE products SET name=?, description=?, price=?, planet_id=?, keywords=? WHERE id=?";
+        String sql = "UPDATE products SET name=?, description=?, price=?, planet_id=?, keywords=? WHERE product_id=?";
         return jdbcTemplate.update(sql,
                 product.getName(),
                 product.getDescription(),
@@ -84,11 +86,12 @@ public class ProductDaoJdbcTemplateImpl implements ProductDao {
 
     @Override
     public int deleteById(Long id) {
-        return jdbcTemplate.update("DELETE FROM products WHERE id = ?", id);
+        // ✅ ВИПРАВЛЕНО: product_id замість id
+        return jdbcTemplate.update("DELETE FROM products WHERE product_id = ?", id);
     }
 
     @Override
-    public List<Product> findByPlanetId(String planetId) {
+    public List<Product> findByPlanetId(Long planetId) { // ✅ ВИПРАВЛЕНО: String -> Long
         return jdbcTemplate.query("SELECT * FROM products WHERE planet_id = ?", productRowMapper, planetId);
     }
 
@@ -99,7 +102,7 @@ public class ProductDaoJdbcTemplateImpl implements ProductDao {
     }
 
     @Override
-    public int updatePriceByPlanet(String planetId, double multiplier) {
+    public int updatePriceByPlanet(Long planetId, double multiplier) { // ✅ ВИПРАВЛЕНО: String -> Long
         return jdbcTemplate.update("UPDATE products SET price = price * ? WHERE planet_id = ?", multiplier, planetId);
     }
 }
