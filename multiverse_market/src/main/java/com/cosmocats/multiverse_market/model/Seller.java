@@ -1,23 +1,24 @@
 package com.cosmocats.multiverse_market.model;
 
-import java.util.UUID;
-
 public class Seller {
-    private String id = UUID.randomUUID().toString();
+    private Long id;
     private String name;
-    private String planetId;
+    private Long planetId;
     private String contact;
-
     public Seller() {}
-    public Seller(String name, String planetId, String contact) {
-        this.name = name; this.planetId = planetId; this.contact = contact;
+
+    public Seller(Long id, String name, Long planetId, String contact) {
+        this.id = id;
+        this.name = name;
+        this.planetId = planetId;
+        this.contact = contact;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -29,11 +30,11 @@ public class Seller {
         this.name = name;
     }
 
-    public String getPlanetId() {
+    public Long getPlanetId() {
         return planetId;
     }
 
-    public void setPlanetId(String planetId) {
+    public void setPlanetId(Long planetId) {
         this.planetId = planetId;
     }
 
@@ -45,4 +46,3 @@ public class Seller {
         this.contact = contact;
     }
 }
-
