@@ -26,12 +26,12 @@ public class ProductDaoJdbcClientImpl implements ProductDao {
         List<String> keywords = keywordsStr != null ? Arrays.asList(keywordsStr.split(",")) : List.of();
 
         return new Product(
-                rs.getLong("id"),
+                rs.getLong("product_id"),
                 rs.getString("name"),
                 rs.getString("description"),
                 rs.getDouble("price"),
-                rs.getString("seller_id"),
-                rs.getString("planet_id"),
+                rs.getLong("seller_id"),
+                rs.getLong("planet_id"),
                 keywords
         );
     }
@@ -57,8 +57,8 @@ public class ProductDaoJdbcClientImpl implements ProductDao {
 
     @Override
     public Optional<Product> findById(Long id) {
-        return jdbcClient.sql("SELECT * FROM products WHERE id = :id")
-                .param("id", id)
+        return jdbcClient.sql("SELECT * FROM products WHERE product_id = ?")
+                .param(1, id)
                 .query(this::mapRow)
                 .optional();
     }
@@ -72,7 +72,7 @@ public class ProductDaoJdbcClientImpl implements ProductDao {
 
     @Override
     public int update(Product product) {
-        return jdbcClient.sql("UPDATE products SET name=?, description=?, price=?, planet_id=?, keywords=? WHERE id=?")
+        return jdbcClient.sql("UPDATE products SET name=?, description=?, price=?, planet_id=?, keywords=? WHERE product_id=?")
                 .param(1, product.getName())
                 .param(2, product.getDescription())
                 .param(3, product.getPrice())
@@ -84,15 +84,15 @@ public class ProductDaoJdbcClientImpl implements ProductDao {
 
     @Override
     public int deleteById(Long id) {
-        return jdbcClient.sql("DELETE FROM products WHERE id = :id")
-                .param("id", id)
+        return jdbcClient.sql("DELETE FROM products WHERE product_id = ?")
+                .param(1, id)
                 .update();
     }
 
     @Override
-    public List<Product> findByPlanetId(String planetId) {
-        return jdbcClient.sql("SELECT * FROM products WHERE planet_id = :id")
-                .param("id", planetId)
+    public List<Product> findByPlanetId(Long planetId) {
+        return jdbcClient.sql("SELECT * FROM products WHERE planet_id = ?")
+                .param(1, planetId)
                 .query(this::mapRow)
                 .list();
     }
@@ -100,17 +100,18 @@ public class ProductDaoJdbcClientImpl implements ProductDao {
     @Override
     public List<Product> searchByKeyword(String keyword) {
         String likeQuery = "%" + keyword + "%";
-        return jdbcClient.sql("SELECT * FROM products WHERE name LIKE :q OR keywords LIKE :q")
-                .param("q", likeQuery)
+        return jdbcClient.sql("SELECT * FROM products WHERE name LIKE ? OR keywords LIKE ?")
+                .param(1, likeQuery)
+                .param(2, likeQuery)
                 .query(this::mapRow)
                 .list();
     }
 
     @Override
-    public int updatePriceByPlanet(String planetId, double multiplier) {
-        return jdbcClient.sql("UPDATE products SET price = price * :mult WHERE planet_id = :pid")
-                .param("mult", multiplier)
-                .param("pid", planetId)
+    public int updatePriceByPlanet(Long planetId, double multiplier) {
+        return jdbcClient.sql("UPDATE products SET price = price * ? WHERE planet_id = ?")
+                .param(1, multiplier)
+                .param(2, planetId)
                 .update();
     }
 }
