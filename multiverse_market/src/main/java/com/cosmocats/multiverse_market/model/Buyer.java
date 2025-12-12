@@ -1,8 +1,19 @@
 package com.cosmocats.multiverse_market.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "BUYERS")
 public class Buyer {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "buyer_id")
     private Long id;
+
+    @Column(nullable = false)
     private String username;
+
     private String email;
 
     public Buyer() {}
@@ -18,27 +29,12 @@ public class Buyer {
         this.email = email;
     }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 }
