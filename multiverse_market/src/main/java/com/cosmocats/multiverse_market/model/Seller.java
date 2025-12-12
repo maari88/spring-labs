@@ -1,48 +1,43 @@
 package com.cosmocats.multiverse_market.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "SELLERS")
 public class Seller {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "seller_id")
     private Long id;
+
+    @Column(nullable = false)
     private String name;
-    private Long planetId;
+
+    @ManyToOne
+    @JoinColumn(name = "planet_id")
+    private Planet planet;
+
+    @Column(name = "contact_info")
     private String contact;
+
     public Seller() {}
 
-    public Seller(Long id, String name, Long planetId, String contact) {
-        this.id = id;
+    public Seller(String name, Planet planet, String contact) {
         this.name = name;
-        this.planetId = planetId;
+        this.planet = planet;
         this.contact = contact;
     }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getName() {
-        return name;
-    }
+    public Planet getPlanet() { return planet; }
+    public void setPlanet(Planet planet) { this.planet = planet; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getPlanetId() {
-        return planetId;
-    }
-
-    public void setPlanetId(Long planetId) {
-        this.planetId = planetId;
-    }
-
-    public String getContact() {
-        return contact;
-    }
-
-    public void setContact(String contact) {
-        this.contact = contact;
-    }
+    public String getContact() { return contact; }
+    public void setContact(String contact) { this.contact = contact; }
 }
