@@ -1,12 +1,12 @@
 package com.cosmocats.multiverse_market.repository;
 
 import com.cosmocats.multiverse_market.model.Seller;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 import java.util.Optional;
 
-public interface SellerRepository {
-    List<Seller> findAll();
-    Optional<Seller> findById(Long id);
-    Seller save(Seller s);
-    void deleteById(Long id);
+@Repository
+public interface SellerRepository extends JpaRepository<Seller, Long> {
 }
