@@ -1,9 +1,7 @@
 package com.cosmocats.multiverse_market.service;
 
 import com.cosmocats.multiverse_market.model.Product;
-import com.cosmocats.multiverse_market.repository.ProductDao;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import com.cosmocats.multiverse_market.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,55 +11,54 @@ import java.util.Optional;
 @Service
 public class ProductService {
 
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
     private final LoggerComponent logger;
 
-    @Autowired
-    public ProductService(@Qualifier("jdbcClientDao") ProductDao productDao, LoggerComponent logger) {
-        this.productDao = productDao;
+    public ProductService(ProductRepository productRepository, LoggerComponent logger) {
+        this.productRepository = productRepository;
         this.logger = logger;
     }
 
     public List<Product> findAll() {
-        return productDao.findAll();
+        return productRepository.findAll();
     }
 
     public List<Product> findByPlanet(Long planetId) {
-        return productDao.findByPlanetId(planetId);
+        return productRepository.findByPlanet_Id(planetId);
     }
 
     public Optional<Product> findById(Long id) {
-        return productDao.findById(id);
+        return productRepository.findById(id);
     }
 
     public Product save(Product product) {
         if (product.getId() == null) {
-            logger.log("Створення нового продукту: " + product.getName());
-            return productDao.create(product);
+            logger.log("Створення (JPA): " + product.getName());
         } else {
-            logger.log("Оновлення продукту ID: " + product.getId());
-            productDao.update(product);
-            return product;
+            logger.log("Оновлення (JPA): " + product.getId());
         }
+        return productRepository.save(product);
     }
 
     public void deleteById(Long id) {
-        productDao.deleteById(id);
+        productRepository.deleteById(id);
     }
 
     @Transactional
     public void applyInflationToPlanet(Long planetId, double percentage, boolean simulateError) {
         double multiplier = 1.0 + (percentage / 100.0);
-        logger.log("Початок транзакції. Інфляція " + percentage + "% на планеті " + planetId);
+        logger.log("Транзакція. Інфляція " + percentage + "% на планеті " + planetId);
 
-        int updatedRows = productDao.updatePriceByPlanet(planetId, multiplier);
-        logger.log("Оновлено записів: " + updatedRows);
+        List<Product> products = productRepository.findByPlanet_Id(planetId);
+
+        for (Product p : products) {
+            p.setPrice(p.getPrice() * multiplier);
+        }
+        productRepository.saveAll(products);
 
         if (simulateError) {
-            logger.log("Помилка! Відкат транзакції");
-            throw new RuntimeException("Штучна помилка для тестування відкату транзакції.");
+            throw new RuntimeException("Test rollback");
         }
-
-        logger.log("Транзакція успішно завершена.");
+        logger.log("Успішно оновлено " + products.size() + " товарів.");
     }
 }
